@@ -16,10 +16,16 @@ FROM python:3.7.7-alpine
 
 WORKDIR /
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add --update musl-dev
+RUN apk add --update gcc
+RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install wheel -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --upgrade setuptools -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 COPY test-requirements.txt ./
-RUN pip install --no-cache-dir -r test-requirements.txt
+RUN pip install --no-cache-dir -r test-requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 COPY productpage.py /opt/microservices/
 COPY tests/unit/* /opt/microservices/
