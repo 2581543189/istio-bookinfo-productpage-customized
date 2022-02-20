@@ -301,7 +301,7 @@ def front():
     product_id = 0  # TODO: replace default value
     headers = getForwardHeaders(request)
     user = session.get('user', '')
-    product = getProduct(product_id)
+    product = getProduct(product_id,headers)
     detailsStatus, details = getProductDetails(product_id, headers)
 
     if flood_factor > 0:
@@ -359,12 +359,14 @@ def getProducts():
     ]
 
 
-def getProduct(product_id):
+def getProduct(product_id,headers):
     products = getProducts()
     if product_id + 1 > len(products):
         return None
     else:
-        return products[product_id]
+        tmp = products[product_id]
+        tmp['traceId'] = (dict(headers))['X-B3-TraceId']
+        return tmp
 
 
 def getProductDetails(product_id, headers):
